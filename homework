@@ -1,0 +1,35 @@
+import java.util.Scanner;
+public class Body {
+    // 静态方法：计算BMI并输出结果
+    public static void MassIndex(double weight, double height) {
+        // 计算BMI公式：体重(kg) / (身高(m) * 身高(m))
+        double bmi = weight / (height * height);
+
+        // 根据BMI范围输出对应文本
+        if (bmi < 18.5) {
+            System.out.println("体重过轻：低于18.5");
+        } else if (bmi >= 18.5 && bmi <= 24.9) {
+            System.out.println("正常：介于18.5和24.9之间");
+        } else if (bmi >= 25 && bmi <= 29.9) {
+            System.out.println("超重：介于25至29.9之间");
+        } else if (bmi >= 30) {
+            System.out.println("肥胖：30或更大");
+        }
+    }
+    // 程序入口：main方法
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // 读取用户输入
+        System.out.print("请输入体重（千克）：");
+        double weight = scanner.nextDouble();
+
+        System.out.print("请输入身高（米）：");
+        double height = scanner.nextDouble();
+
+        // 调用静态方法计算BMI
+        Body.MassIndex(weight, height);
+
+        scanner.close();
+    }
+}
