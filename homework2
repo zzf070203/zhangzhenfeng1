@@ -1,0 +1,92 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class LibrarySystem {
+
+    // 按顺序存储所有图书
+    private final List<Book> bookList;
+
+    // 存储不重复的图书流派
+    private final Set<String> genreSet;
+
+    // 根据ID快速查找图书 O(1)
+    private final Map<Integer, Book> bookMap;
+
+    public LibrarySystem() {
+        bookList = new ArrayList<>();
+        genreSet = new HashSet<>();
+        bookMap = new HashMap<>();
+    }
+
+    /**
+     * 添加图书，同时维护三个集合
+     */
+    public void addBook(Book book) {
+        bookList.add(book);
+        genreSet.add(book.getGenre());
+        bookMap.put(book.getId(), book);
+    }
+
+    /**
+     * 根据关键词删除图书（标题包含关键词）
+     * 使用迭代器避免 ConcurrentModificationException
+     */
+    public void removeBooksByKeyword(String key) {
+        Iterator<Book> iterator = bookList.iterator();
+
+        while (iterator.hasNext()) {
+            Book book = iterator.next();
+            if (book.getTitle().contains(key)) {
+                iterator.remove(); // 安全删除
+                bookMap.remove(book.getId());
+                // 注意：genreSet不主动删除，除非该流派已无图书
+            }
+        }
+    }
+
+    /**
+     * 展示当前图书馆状态
+     */
+    public void displayStatus() {
+        System.out.println("===== 图书馆当前状态 =====");
+
+        System.out.println("\n1. 所有图书列表（ArrayList）：");
+        for (Book book : bookList) {
+            System.out.println(book);
+        }
+
+        System.out.println("\n2. 图书分类（HashSet，无重复）：");
+        for (String genre : genreSet) {
+            System.out.println(genre);
+        }
+
+        System.out.println("\n3. 按ID映射图书（HashMap）：");
+        for (Map.Entry<Integer, Book> entry : bookMap.entrySet()) {
+            System.out.println("ID:" + entry.getKey() + " → " + entry.getValue().getTitle());
+        }
+
+        System.out.println("==========================\n");
+    }
+
+    // 测试
+    public static void main(String[] args) {
+        LibrarySystem library = new LibrarySystem();
+
+        library.addBook(new Book(101, "Java编程思想", "计算机"));
+        library.addBook(new Book(102, "深入理解Java虚拟机", "计算机"));
+        library.addBook(new Book(103, "三体", "科幻"));
+        library.addBook(new Book(104, "流浪地球", "科幻"));
+
+        library.displayStatus();
+
+        // 删除包含“Java”的图书
+        library.removeBooksByKeyword("Java");
+        System.out.println("删除标题含 Java 的图书后：");
+        library.displayStatus();
+    }
+}
